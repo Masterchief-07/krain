@@ -1,0 +1,2 @@
+# krain
+my AI lib
