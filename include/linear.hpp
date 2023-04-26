@@ -8,11 +8,11 @@ class LinearRegression{
     public:
     LinearRegression();
     ~LinearRegression(){}
-    void train(std::vector<float> data);
-    void predict(std::vector<float> data);
+    void train(std::vector<float>& input, std::vector<float>& target);
+    std::vector<float> predict(std::vector<float>& input);
 
     private:
-    float wGrad();
+    float wGrad(std::vector<float>& input);
     float bGrad();
 
     private:
