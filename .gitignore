@@ -1,6 +1,7 @@
 #PERSO
 build/
 .vscode/
+venv/
 
 
 # Prerequisites
