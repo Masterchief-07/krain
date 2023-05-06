@@ -101,7 +101,7 @@ with open('input.txt') as F:
     void executedPythonCode(std::string& code)
     {
         std::string command = m_path_python+" -c " + code;
-        std::cout<<command<<"\n";
+        // std::cout<<command<<"\n";
         system(command.c_str());
     }
 
@@ -121,33 +121,7 @@ with open('input.txt') as F:
     {
         m_input_num +=1;
         std::stringstream data{};
-//         data << R"(
-// # Read data from command-line arguments
-// # x = list(map(float, sys.argv[)"<<m_input_num-1<<R"(].split(',')))
-// # y = list(map(float, sys.argv[)"<<m_input_num<<R"(].split(',')))
-// # Create a plot
-// )";
-        // python_code += "\n";
         data << "plt.plot(x["<<m_input_num-1<<"], y["<<m_input_num-1<<"], \'"<<plot_type<<"\', linewidth="<<linewidth<<", markersize="<<markersize<<")\n";
-        
-        // std::cout<<data.str()<<"\n";
         return data;
     }
-
-//     std::string m_python_code = R"(
-// import sys
-// import matplotlib.pyplot as plt
-
-// # Read data from command-line arguments
-// x = list(map(float, sys.argv[1].split(',')))
-// y = list(map(float, sys.argv[2].split(',')))
-
-// # Create a plot
-// plt.plot(x, y)
-// plt.xlabel('X axis label')
-// plt.ylabel('Y axis label')
-// plt.title('Plot title')
-// plt.show()
-//     )";
-
 };
