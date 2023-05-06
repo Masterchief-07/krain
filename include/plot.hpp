@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <sstream>
+#include <fstream>
 class Plot{
 
     public:
@@ -15,7 +16,19 @@ class Plot{
         init();
         m_pythonCode << R"(
 import sys
-import matplotlib.pyplot as plt)";
+import matplotlib.pyplot as plt
+x = []
+y = []
+with open('input.txt') as F:
+    lines = F.readlines()
+    for line in lines:
+        x_, y_ = line.split(' ')
+        # print(x_, '\n', y_)
+        x_ = list(map(float, x_.split(',')))
+        y_ = list(map(float, y_.split(',')))
+        x.append(x_)
+        y.append(y_)
+)";
     }
     ~Plot(){};
     template<typename T>
@@ -32,8 +45,9 @@ import matplotlib.pyplot as plt)";
     {
         std::string x_str = arrayToString(x),
                     y_str = arrayToString(y);
-                    m_input << add_input(x_str, y_str).str();
-                    m_pythonCode << add_plot(plot_type, linewidth, markersize).str();
+                    // m_input << addInput(x_str, y_str).str();
+                    addInputInFile(x_str, y_str);
+                    m_pythonCode << addPlot(plot_type, linewidth, markersize).str();
     }
 
     void show(
@@ -57,6 +71,12 @@ import matplotlib.pyplot as plt)";
     std::stringstream m_input{};
     std::stringstream m_pythonCode{};
     std::size_t m_input_num{0};
+    void init()
+    {
+        std::string code =  "import tkinter\nimport matplotlib";
+        code = "\"" + code + "\"";
+        executedPythonCode(code);
+    }
     template<typename T>
     std::string arrayToString(const T& values, const std::string separator=",")
     {
@@ -67,42 +87,48 @@ import matplotlib.pyplot as plt)";
 
         return data;
     };
-    void init()
+    void addInputInFile(std::string& x, std::string&y, std::string filename="input.txt")
     {
-        std::string code =  "import tkinter\nimport matplotlib";
-        code = "\"" + code + "\"";
-        executedPythonCode(code);
+        std::ofstream file;
+        if (m_input_num == 0)
+            file.open(filename);
+        else
+            file.open(filename, std::ofstream::app);
+        file << x<<" ";
+        file << y<<"\n";
+        file.close();
     }
     void executedPythonCode(std::string& code)
     {
         std::string command = m_path_python+" -c " + code;
-        // std::cout<<command<<"\n";
+        std::cout<<command<<"\n";
         system(command.c_str());
     }
 
-    std::stringstream add_input(std::string& x, std::string& y)
+    std::stringstream addInput(std::string& x, std::string& y)
     {
+        addInputInFile(x, y);
         std::stringstream data;
         data<<x<<" "<<y<<" ";
         return data;
     }
 
-    std::stringstream add_plot(
+    std::stringstream addPlot(
                         const std::string plot_type="r*",
                         const int linewidth=2,
                         const int markersize=3
                         )
     {
-        m_input_num +=2;
+        m_input_num +=1;
         std::stringstream data{};
-        data << R"(
-# Read data from command-line arguments
-x = list(map(float, sys.argv[)"<<m_input_num-1<<R"(].split(',')))
-y = list(map(float, sys.argv[)"<<m_input_num<<R"(].split(',')))
-# Create a plot
-)";
+//         data << R"(
+// # Read data from command-line arguments
+// # x = list(map(float, sys.argv[)"<<m_input_num-1<<R"(].split(',')))
+// # y = list(map(float, sys.argv[)"<<m_input_num<<R"(].split(',')))
+// # Create a plot
+// )";
         // python_code += "\n";
-        data << "plt.plot(x, y, \'"<<plot_type<<"\', linewidth="<<linewidth<<", markersize="<<markersize<<")\n";
+        data << "plt.plot(x["<<m_input_num-1<<"], y["<<m_input_num-1<<"], \'"<<plot_type<<"\', linewidth="<<linewidth<<", markersize="<<markersize<<")\n";
         
         // std::cout<<data.str()<<"\n";
         return data;
