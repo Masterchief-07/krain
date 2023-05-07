@@ -14,6 +14,10 @@ int main() {
     newdirection -= 3;
     std::cout<<krain::Vector<float, 1, 3>::sum(direction)<<"\n";
     std::cout<<newdirection.sum()<<"\n";
+    direction += newdirection;
+    std::cout<<direction.sum()<<"\n";
+    direction -= newdirection;
+    std::cout<<direction.sum()<<"\n";
 
     return 0;
 }
