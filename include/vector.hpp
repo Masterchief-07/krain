@@ -6,12 +6,14 @@
 #include <concepts>
 
 template<typename T>
-concept SCALAR_C = std::is_integral_v<T> || std::is_floating_point_v<T>;
+concept SCALAR = (std::is_integral_v<T> || std::is_floating_point_v<T>) && std::is_scalar_v<T>;
+
 namespace krain
 {
-    template<SCALAR_C T, std::size_t Rows, std::size_t Columns>
+    template<typename T, std::size_t Rows, std::size_t Columns>
+    requires SCALAR<T>
     class Vector{
-        using VECT  = Vector<T, Rows, Columns>;
+        using VECT = Vector<T, Rows, Columns>;
         using VECT2  = Vector<T, Columns, Rows>;
         public:
         const size_t rows{Rows}, columns{Columns}, size{Rows*Columns};
@@ -19,10 +21,10 @@ namespace krain
             assert(Rows > 0);
             assert(Columns > 0);
         }
-        Vector(const T& value):m_data{}{
-            for (auto& x : m_data)
-                x = value;
-        }
+        // Vector(const T& value):m_data{}{
+        //     for (auto& x : m_data)
+        //         x = value;
+        // }
         Vector(const std::array<T, Rows*Columns>& value):m_data{value}{
         }
         ~Vector(){}
@@ -48,35 +50,40 @@ namespace krain
         }
 
         //-----------------operation with scalar----------------------
-        template<SCALAR_C Scalar>
+        template<typename Scalar>
+        requires SCALAR<Scalar>
         static VECT add(VECT vect, const Scalar& value)
         {
             for(auto& x : vect.m_data)
                 x += value;
             return vect;
         }
-        template<SCALAR_C Scalar>
+        template<typename Scalar>
+        requires SCALAR<Scalar>
         static VECT sub(VECT vect, const Scalar& value)
         {
             for(auto& x : vect.m_data)
                 x -= value;
             return vect;
         }
-        template<SCALAR_C Scalar>
+        template<typename Scalar>
+        requires SCALAR<Scalar>
         static VECT mult(VECT vect, const Scalar& value)
         {
             for(auto& x : vect.m_data)
                 x *= value;
             return vect;
         }
-        template<SCALAR_C Scalar>
+        template<typename Scalar>
+        requires SCALAR<Scalar>
         static VECT divide(VECT vect, const Scalar& value)
         {
             for(auto& x : vect.m_data)
                 x /= value;
             return vect;
         }
-        template<SCALAR_C Scalar>
+        template<typename Scalar>
+        requires SCALAR<Scalar>
         static VECT power(VECT vect, const Scalar& value)
         {
             for(auto& x : vect.m_data)
@@ -93,6 +100,12 @@ namespace krain
         {
             for(size_t i=0; i<(Rows * Columns); i++)
                 vect.m_data[i] -= vect2.m_data[i];
+            return vect;
+        }
+        static VECT mult(VECT vect, const VECT& vect2)
+        {
+            for(size_t i=0; i<(Rows * Columns); i++)
+                vect.m_data[i] *= vect2.m_data[i];
             return vect;
         }
         template <size_t NewColumns>
@@ -136,45 +149,40 @@ namespace krain
         // static Vector<Rows, Columns> divide(VECT& vect, VECT value);
 
         //-----------------operator overload--------------------------
-        template<SCALAR_C Scalar>
-        VECT operator+(const Scalar& value) const
+        VECT operator+(const T& value) const
         {
             return this->add(*this, value);
         }
-        template<SCALAR_C Scalar>
-        VECT operator-(const Scalar& value) const
+        VECT operator-(const T& value) const
         {
             return this->sub(*this, value);
-        }template<SCALAR_C Scalar>
-        VECT operator*(const Scalar& value) const
+        }
+        VECT operator*(const T& value) const
         {
             return this->mult(*this, value);
-        }template<SCALAR_C Scalar>
-        VECT operator/(const Scalar& value) const
+        }
+        VECT operator/(const T& value) const
         {
             return this->div(*this, value);
         }
         //-------
-        template<SCALAR_C Scalar>
-        VECT& operator+=(const Scalar& value)
+        VECT& operator+=(const T& value)
         {
             return *this = *this + value;
         }
-        template<SCALAR_C Scalar>
-        VECT& operator-=(const Scalar& value)
+        VECT& operator-=(const T& value)
         {
             return *this = *this - value;
-        }template<SCALAR_C Scalar>
-        VECT& operator*=(const Scalar& value)
+        }
+        VECT& operator*=(const T& value)
         {
             return *this = *this * value;
-        }template<SCALAR_C Scalar>
-        VECT& operator/=(const Scalar& value)
+        }
+        VECT& operator/=(const T& value)
         {
             return *this = *this / value;
         }
-        template<SCALAR_C Scalar>
-        VECT operator^(const Scalar& value)
+        VECT operator^(const T& value)
         {
             return this->power(*this, value);
         }
@@ -187,6 +195,10 @@ namespace krain
         VECT operator-(const VECT& vect)
         {
             return this->sub(*this, vect);
+        }
+        VECT operator*(const VECT& value)
+        {
+            return this->mult(*this, value);
         }
         // VECT operator^(const VECT& value)
         // {
@@ -205,10 +217,10 @@ namespace krain
         {
             return *this = *this - vect;
         }
-        // VECT& operator*=(const VECT& value)
-        // {
-        //     return *this = *this * value;
-        // }
+        VECT& operator*=(const VECT& value)
+        {
+            return *this = *this * value;
+        }
         // VECT& operator/=(const VECT& value)
         // {
         //     return *this = *this / value;
@@ -264,6 +276,11 @@ namespace krain
         {
             return Tr(*this);
         }
+
+        // static VECT mean(VECT vect)
+        // {
+
+        // }
         //----------------------generator-----------------------------------
         static VECT arange(T start, T end)
         {
@@ -297,19 +314,26 @@ namespace krain
     };
 
 }
-template<SCALAR_C Scalar, SCALAR_C T, std::size_t Rows, std::size_t Columns>
+template<typename Scalar, typename T, std::size_t Rows, std::size_t Columns>
+requires SCALAR<Scalar>
 krain::Vector<T, Rows, Columns> operator+(const Scalar& value, const krain::Vector<T, Rows, Columns>& vect)
 {
     return vect+value;
-}template<SCALAR_C Scalar, SCALAR_C T, std::size_t Rows, std::size_t Columns>
+}
+template<typename Scalar, typename T, std::size_t Rows, std::size_t Columns>
+requires SCALAR<Scalar>
 krain::Vector<T, Rows, Columns> operator-(const Scalar& value, const krain::Vector<T, Rows, Columns>& vect)
 {
     return vect-value;
-}template<SCALAR_C Scalar, SCALAR_C T, std::size_t Rows, std::size_t Columns>
+}
+template<typename Scalar, typename T, std::size_t Rows, std::size_t Columns>
+requires SCALAR<Scalar>
 krain::Vector<T, Rows, Columns> operator*(const Scalar& value, const krain::Vector<T, Rows, Columns>& vect)
 {
     return vect*value;
-}template<SCALAR_C Scalar, SCALAR_C T, std::size_t Rows, std::size_t Columns>
+}
+template<typename Scalar, typename T, std::size_t Rows, std::size_t Columns>
+requires SCALAR<Scalar>
 krain::Vector<T, Rows, Columns> operator/(const Scalar& value, const krain::Vector<T, Rows, Columns>& vect)
 {
     return vect/value;
