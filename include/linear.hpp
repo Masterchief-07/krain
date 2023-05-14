@@ -14,6 +14,10 @@ class LinearRegression{
     template<size_t columns>
     void train(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target, scalar lr=0.001, scalar threshold=0.05)
     {
+        w = 0;
+        b = 0;
+        w_grad = 0;
+        b_grad = 0;
         setLR(lr);
         scalar loss = 1;
         while(loss>threshold && !std::isinf(loss))
