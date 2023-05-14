@@ -4,13 +4,8 @@
 
 namespace plt = matplotlibcpp;
 
-int test (const int& a, const int& b)
-{
-    return a+b;
-}
-
 int main() {
-    auto X = krain::Vector<double, 1, 10>::arange(0.5, 1);
+    auto X = krain::Vector<double, 1, 1000>::arange(-1, 1);
     std::cout<<"x:"<<X<<"\n";
     double B{7.34}, W{3.15};
     // auto Y = (krain::Vector<float, 1,10>) B;
@@ -21,7 +16,7 @@ int main() {
     // // plt::show();
 
     krain::LinearRegression<double> linear{};
-    linear.train(X, Y, 0.00001, 0.001);
+    linear.train(X, Y, 0.01, 0.00001);
     std::cout<<"B:"<<B<<" W:"<<W<<"\n";
     std::cout<<"B_train:"<<linear.getB()<<" W_train:"<<linear.getW()<<"\n";
     plt::plot(linear.loss_evolution);
