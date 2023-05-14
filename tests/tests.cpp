@@ -50,7 +50,12 @@ TEST_CASE("TEST VECTOR ON SCALAR", "[VECTOR ON SCALAR]")
     REQUIRE(5/myvect2 == myvectTarget);
     myvectTarget = krain::Vector<double, 2, 2>{{1/5.0, 1/5.0, 1/5.0, 1/5.0}};
     REQUIRE(myvect2/5 == myvectTarget);
-    REQUIRE((myvect2^3) == myvect2);
+    myvect2 = krain::Vector<double, 2, 2>{{2, 2, 2, 2}};
+    myvectTarget = krain::Vector<double, 2, 2>{{8, 8, 8, 8}};
+    REQUIRE((myvect2^3) == myvectTarget);
+    myvect2 = krain::Vector<double, 2, 2>{{4, 4, 4, 4}};
+    myvectTarget = krain::Vector<double, 2, 2>{{2, 2, 2, 2}};
+    REQUIRE(myvect2.sqrt() == myvectTarget);
 
     REQUIRE((1.23 + 3.75*myvect2) == (myvect2*3.75 + 1.23));
 }
