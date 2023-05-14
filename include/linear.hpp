@@ -63,15 +63,15 @@ class LinearRegression{
         auto error = output - target;
         // std::cout<<"error: "<<error<<"\n";
         auto loss = (error^2).mean();
-        std::cout<<"loss: "<<loss<<"\n";
+        // std::cout<<"loss: "<<loss<<"\n";
         w_grad = wGrad(input, error);
-        std::cout<<"w_grad: "<<w_grad<<"\n";
+        // std::cout<<"w_grad: "<<w_grad<<"\n";
         b_grad = bGrad(error);
-        std::cout<<"b_grad: "<<b_grad<<"\n";
+        // std::cout<<"b_grad: "<<b_grad<<"\n";
         w =  w - m_lr * w_grad;
-        std::cout<<"w: "<<w<<"\n";
+        // std::cout<<"w: "<<w<<"\n";
         b = b - m_lr * b_grad;
-        std::cout<<"b: "<<b<<"\n";
+        // std::cout<<"b: "<<b<<"\n";
         w_evolution.push_back(w);
         b_evolution.push_back(b);
 
