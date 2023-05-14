@@ -1,23 +1,29 @@
-#include <plot.hpp>
-#include <vector>
 #include <iostream>
-#include <cmath>
-#include <vector.hpp>
+#include <matplotlibcpp.h>
+#include <linear.hpp>
+
+namespace plt = matplotlibcpp;
+
+int test (const int& a, const int& b)
+{
+    return a+b;
+}
 
 int main() {
-    krain::Vector<float, 1, 3> direction(3);
-    direction.get(0,0) = 3;
-    direction.get(0,1) = 6;
-    direction.get(0,2) = 9;
-    std::cout<<direction.get(0, 1)<<"\n";
-    auto newdirection = direction + 6;
-    newdirection -= 3;
-    std::cout<<krain::Vector<float, 1, 3>::sum(direction)<<"\n";
-    std::cout<<newdirection.sum()<<"\n";
-    direction += newdirection;
-    std::cout<<direction.sum()<<"\n";
-    direction -= newdirection;
-    std::cout<<direction.sum()<<"\n";
+    auto X = krain::Vector<double, 1, 10>::arange(0.5, 1);
+    std::cout<<"x:"<<X<<"\n";
+    double B{7.34}, W{3.15};
+    // auto Y = (krain::Vector<float, 1,10>) B;
+    auto Y = X * W + B;
+    // auto Y = B + W * (X^2);
+    // std::cout<<"y:"<<Y<<"\n";
+    // plt::plot(X.getDataVector(), Y.getDataVector());
+    // plt::show();
 
+    // krain::LinearRegression<double> linear{};
+    // linear.train(X, Y);
+    auto a{10}, b{20};
+    std::cout<<test(a,  b)<<"\n";
+    
     return 0;
 }
