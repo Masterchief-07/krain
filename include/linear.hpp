@@ -1,6 +1,7 @@
 #pragma once
 // #include <vector>
 #include "vector.hpp"
+#include <cmath>
 
 namespace krain
 {
@@ -11,12 +12,14 @@ class LinearRegression{
     LinearRegression(){}
     ~LinearRegression(){}
     template<size_t columns>
-    void train(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target)
+    void train(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target, scalar lr=0.001, scalar threshold=0.05)
     {
+        setLR(lr);
         scalar loss = 1;
-        while(loss>0.001)
+        while(loss>threshold && !std::isinf(loss))
         {
             loss = steps(input, target);
+            loss_evolution.push_back(loss);
         }
         // w_grad = 
     }
@@ -51,33 +54,41 @@ class LinearRegression{
     template<size_t columns>
     scalar steps(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target)
     {
-        auto output = b + w * input ;
-        std::cout<<"output: "<<output<<"\n";
+        auto output = b + (w * input) ;
+        // std::cout<<"output: "<<output<<"\n";
         auto error = output - target;
-        std::cout<<"error: "<<error<<"\n";
-        auto loss = (error^2).sum();
+        // std::cout<<"error: "<<error<<"\n";
+        auto loss = (error^2).mean();
         std::cout<<"loss: "<<loss<<"\n";
         w_grad = wGrad(input, error);
+        std::cout<<"w_grad: "<<w_grad<<"\n";
         b_grad = bGrad(error);
-        w -= m_lr * w_grad;
-        b -= m_lr * b_grad;
+        std::cout<<"b_grad: "<<b_grad<<"\n";
+        w =  w - m_lr * w_grad;
+        std::cout<<"w: "<<w<<"\n";
+        b = b - m_lr * b_grad;
+        std::cout<<"b: "<<b<<"\n";
+        w_evolution.push_back(w);
+        b_evolution.push_back(b);
 
         return loss;
     }
     template<size_t columns>
     scalar wGrad(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& error)
     {
-        return 2 * (input * error).sum() / (scalar) input.size();
+        return 2.0 * (input * error).mean();
 
     }
     template<size_t columns>
     scalar bGrad(const Vector<scalar, 1, columns>& error)
     {
-        return 2 * (error).sum() / (scalar) error.size();
+        return 2.0 * error.mean();
     }
 
     private:
     scalar w{0}, b{0}, w_grad{0}, b_grad{0}, m_lr{0.001};
+    public:
+    std::vector<scalar> w_evolution{}, b_evolution{}, loss_evolution{};
 
 };
 }
