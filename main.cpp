@@ -16,14 +16,18 @@ int main() {
     // auto Y = (krain::Vector<float, 1,10>) B;
     auto Y = X * W + B;
     // auto Y = B + W * (X^2);
-    // std::cout<<"y:"<<Y<<"\n";
-    // plt::plot(X.getDataVector(), Y.getDataVector());
-    // plt::show();
+    std::cout<<"y:"<<Y<<"\n";
+    // // plt::plot(X.getDataVector(), Y.getDataVector());
+    // // plt::show();
 
-    // krain::LinearRegression<double> linear{};
-    // linear.train(X, Y);
-    auto a{10}, b{20};
-    std::cout<<test(a,  b)<<"\n";
+    krain::LinearRegression<double> linear{};
+    linear.train(X, Y, 0.00001, 0.001);
+    std::cout<<"B:"<<B<<" W:"<<W<<"\n";
+    std::cout<<"B_train:"<<linear.getB()<<" W_train:"<<linear.getW()<<"\n";
+    plt::plot(linear.loss_evolution);
+    plt::plot(linear.w_evolution);
+    plt::plot(linear.b_evolution);
+    plt::show();
     
     return 0;
 }
