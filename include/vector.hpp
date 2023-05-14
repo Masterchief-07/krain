@@ -25,7 +25,7 @@ namespace krain
         //     for (auto& x : m_data)
         //         x = value;
         // }
-        Vector(const VECT& input):m_data{input.getData()}
+        Vector(const VECT& input):m_data{input.m_data}
         {
 
         }
@@ -214,6 +214,10 @@ namespace krain
         {
             return this->divide(*this, value);
         }
+        VECT operator^(const T& value) const
+        {
+            return power(*this, value);
+        }
         //-------
         VECT& operator+=(const T& value)
         {
@@ -233,11 +237,6 @@ namespace krain
         VECT& operator/=(const T& value)
         {
             divide_(*this, value);
-            return *this;
-        }
-        VECT& operator^(const T& value)
-        {
-            power_(*this, value);
             return *this;
         }
         
@@ -325,11 +324,13 @@ namespace krain
         static void sqrt_(VECT& vect)
         {
             for(auto& x : vect.m_data)
-                std::sqrt(x);
+                x = std::sqrt(x);
         }
-        void sqrt()
+        VECT sqrt() const
         {
-            sqrt_(*this);
+            auto result{*this};
+            sqrt_(result);
+            return result;
         }
         static T sum(const VECT &vect)
         {
@@ -348,9 +349,10 @@ namespace krain
             VECT2 result{vect.m_data};
             return result;
         }
-        VECT2 Tr()
+        VECT2 Tr() const
         {
-            return Tr(*this);
+            VECT2 result{this->m_data};
+            return result;
         }
 
         T mean() const
