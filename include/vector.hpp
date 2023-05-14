@@ -25,6 +25,10 @@ namespace krain
         //     for (auto& x : m_data)
         //         x = value;
         // }
+        Vector(const VECT& input):m_data{input.getData()}
+        {
+
+        }
         Vector(const std::array<T, Rows*Columns>& value):m_data{value}{
         }
         ~Vector(){}
@@ -41,6 +45,10 @@ namespace krain
         {
             return m_data;
         }
+        std::array<T, Rows*Columns> getData() const
+        {
+            return m_data;
+        }
         std::vector<T> getDataVector() 
         {
             std::vector<T> outvect(m_data.size());
@@ -50,63 +58,104 @@ namespace krain
         }
 
         //-----------------operation with scalar----------------------
-        template<typename Scalar>
-        requires SCALAR<Scalar>
-        static VECT add(VECT vect, const Scalar& value)
+        static void add_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
                 x += value;
-            return vect;
         }
-        template<typename Scalar>
-        requires SCALAR<Scalar>
-        static VECT sub(VECT vect, const Scalar& value)
+        static void sub_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
                 x -= value;
-            return vect;
         }
-        template<typename Scalar>
-        requires SCALAR<Scalar>
-        static VECT mult(VECT vect, const Scalar& value)
+        static void mult_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
                 x *= value;
-            return vect;
         }
-        template<typename Scalar>
-        requires SCALAR<Scalar>
-        static VECT divide(VECT vect, const Scalar& value)
+        static void divide_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
                 x /= value;
+        }
+        static VECT divide(const T& value, VECT vect)
+        {
+            for(auto& x : vect.m_data)
+                x = value/x;
             return vect;
         }
-        template<typename Scalar>
-        requires SCALAR<Scalar>
-        static VECT power(VECT vect, const Scalar& value)
+        VECT add(const VECT& vect, const T& value) const
+        {
+            auto target{vect};
+            add_(target, value);
+            return target;
+
+        }
+        VECT sub(const VECT& vect, const T& value) const
+        {
+            auto target{vect};
+            sub_(target, value);
+            return target;
+
+        }
+        VECT mult(const VECT& vect, const T& value) const
+        {
+            auto target{vect};
+            mult_(target, value);
+            return target;
+
+        }
+        VECT divide(const VECT& vect, const T& value) const
+        {
+            auto target{vect};
+            divide_(target, value);
+            return target;
+
+        }
+        static void power_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
                 x = pow(x, value);
-            return vect;
-        }        //-----------------operation with vector----------------------
-        static VECT add(VECT vect, const VECT& vect2)
+        }        
+        VECT power(const VECT& vect, const T& value) const
+        {
+            auto target{vect};
+            power_(target, value);
+            return target;
+        }
+        //-----------------operation with vector----------------------
+        static void add_(VECT& vect, const VECT& vect2)
         {
             for(size_t i=0; i<(Rows * Columns); i++)
                 vect.m_data[i] += vect2.m_data[i];
-            return vect;
         }
-        static VECT sub(VECT vect, const VECT& vect2)
+        static void sub_(VECT& vect, const VECT& vect2)
         {
             for(size_t i=0; i<(Rows * Columns); i++)
                 vect.m_data[i] -= vect2.m_data[i];
-            return vect;
         }
-        static VECT mult(VECT vect, const VECT& vect2)
+        static void mult_(VECT& vect, const VECT& vect2)
         {
             for(size_t i=0; i<(Rows * Columns); i++)
                 vect.m_data[i] *= vect2.m_data[i];
-            return vect;
+        }
+        VECT add(const VECT& vect, const VECT& vect2) const
+        {
+            auto target{vect};
+            add_(target, vect2);
+            return target;
+        }
+        VECT sub(const VECT& vect, const VECT& vect2) const
+        {
+            auto target{vect};
+            sub_(target, vect2);
+            return target;
+        }
+        VECT mult(const VECT& vect, const VECT& vect2) const
+        {
+            auto target{vect};
+            mult_(target, vect2);
+            return target;
         }
         template <size_t NewColumns>
         static Vector<T, Rows, NewColumns> dot(const VECT& vect,
@@ -163,40 +212,45 @@ namespace krain
         }
         VECT operator/(const T& value) const
         {
-            return this->div(*this, value);
+            return this->divide(*this, value);
         }
         //-------
         VECT& operator+=(const T& value)
         {
-            return *this = *this + value;
+            add_(*this, value);
+            return *this;
         }
         VECT& operator-=(const T& value)
         {
-            return *this = *this - value;
+            sub_(*this, value);
+            return *this;
         }
         VECT& operator*=(const T& value)
         {
-            return *this = *this * value;
+            mult_(*this, value);
+            return *this;
         }
         VECT& operator/=(const T& value)
         {
-            return *this = *this / value;
+            divide_(*this, value);
+            return *this;
         }
-        VECT operator^(const T& value)
+        VECT& operator^(const T& value)
         {
-            return this->power(*this, value);
+            power_(*this, value);
+            return *this;
         }
         
         //------------------OPERATOR OVERLOAD VECT
-        VECT operator+(const VECT& vect)
+        VECT operator+(const VECT& vect) const
         {
             return this->add(*this, vect);
         }
-        VECT operator-(const VECT& vect)
+        VECT operator-(const VECT& vect) const
         {
             return this->sub(*this, vect);
         }
-        VECT operator*(const VECT& value)
+        VECT operator*(const VECT& value) const
         {
             return this->mult(*this, value);
         }
@@ -211,21 +265,39 @@ namespace krain
         //-------
         VECT& operator+=(const VECT& vect)
         {
-            return *this = *this + vect;
+            add_(*this, vect);
+            return *this;
         }
         VECT& operator-=(const VECT& vect)
         {
-            return *this = *this - vect;
+            sub_(*this, vect);
+            return *this;
         }
-        VECT& operator*=(const VECT& value)
+        VECT& operator*=(const VECT& vect)
         {
-            return *this = *this * value;
+            mult_(*this, vect);
+            return *this;
+        }
+        VECT& operator=(const VECT& vect)
+        {
+            const auto& data = vect.getData();
+            for(size_t i=0; i<size; i++)
+                this->m_data[i] = data[i];
+            return *this;
         }
         // VECT& operator/=(const VECT& value)
         // {
         //     return *this = *this / value;
         // }
         //-----------
+        bool operator==(const VECT& value) const
+        {
+            return isEqual(*this, value);
+        }
+        bool operator!=(const VECT& value) const
+        {
+            return !(*this==value);
+        }
         //-----------------------OSTREAM------------------
         friend std::ostream& operator<<(std::ostream& os, const VECT& obj)
         {
@@ -250,22 +322,26 @@ namespace krain
         }
 
         //---------------utilities-------------------------------------
-        static VECT sqrt(VECT vect)
+        static void sqrt_(VECT& vect)
         {
             for(auto& x : vect.m_data)
-                sqrt(x);
-            return vect;
+                std::sqrt(x);
         }
-        static T sum(VECT &vect)
+        void sqrt()
+        {
+            sqrt_(*this);
+        }
+        static T sum(const VECT &vect)
         {
             T result=0;
             for(auto const& x : vect.m_data)
                 result += x;
             return result;
         }
-        T sum()
+        T sum() const
         {
-            return sum(*this);
+            auto value = sum(*this);
+            return value;
         }
         static VECT2 Tr(const VECT& vect)
         {
@@ -301,7 +377,6 @@ namespace krain
             return arange(0, end);
         }
 
-
         private:
         std::array<T, Rows * Columns> m_data;
         size_t getIndex(std::size_t row, std::size_t column) const
@@ -336,5 +411,5 @@ template<typename Scalar, typename T, std::size_t Rows, std::size_t Columns>
 requires SCALAR<Scalar>
 krain::Vector<T, Rows, Columns> operator/(const Scalar& value, const krain::Vector<T, Rows, Columns>& vect)
 {
-    return vect/value;
+    return krain::Vector<T, Rows, Columns>::divide(value, vect);
 }
