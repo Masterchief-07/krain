@@ -115,7 +115,7 @@ namespace krain
         static void power_(VECT& vect, const T& value)
         {
             for(auto& x : vect.m_data)
-                x = pow(x, value);
+                x = std::pow(x, value);
         }        
         VECT power(const VECT& vect, const T& value) const
         {
@@ -353,10 +353,12 @@ namespace krain
             return Tr(*this);
         }
 
-        // static VECT mean(VECT vect)
-        // {
-
-        // }
+        T mean() const
+        {
+            T result = this->sum();
+            result /= ((T)size);
+            return result;
+        }
         //----------------------generator-----------------------------------
         static VECT arange(T start, T end)
         {
