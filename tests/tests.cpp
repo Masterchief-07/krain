@@ -13,6 +13,8 @@ TEST_CASE("test Vector", "[VECTOR]") {
     krain::Vector<double, 1, 2> myvect2{{1, 2}};
     REQUIRE(myvect2.get(0, 0) == 1.0);
     REQUIRE(myvect2.get(0, 1) == 2.0);
+    // std::array<double, 2> target{0};
+    // REQUIRE(myvect.get(0) == target);
 
     REQUIRE(myvect2.sum() == 3.0);
 }
@@ -32,7 +34,26 @@ TEST_CASE("TEST VECTOR ON VECTOR", "[VECTOR ON VECTOR]")
     REQUIRE((myvect3-=myvect2) == myvect);
     REQUIRE((myvect3+=myvect2) == myvect2);
     REQUIRE((myvect3*=myvect) == myvect);
-
+    //-------------------------------------
+    krain::Vector<double, 3, 2> inputTrans{{1, 2, 
+                                            3, 4, 
+                                            5, 6}};
+    krain::Vector<double, 2, 3> resultTrans{{1, 3, 5,
+                                             2, 4, 6}};
+    REQUIRE(inputTrans.Tr() == resultTrans);
+    //----------------dot product---------------
+    auto input = krain::Vector<double, 2, 2> {{1, 2, 
+                                               3, 4}};
+    auto input2 = krain::Vector<double, 2, 2> {{5, 6, 
+                                                7, 8}};
+    auto result = krain::Vector<double, 2, 2> {{7, 10, 
+                                                15, 22}};
+    REQUIRE((input.dot(input)) == result);
+    REQUIRE((input.dot(input2).Tr()) == input2.Tr().dot(input.Tr()));
+    REQUIRE((input.Tr().dot(input2).Tr()) == input2.Tr().dot(input));
+    //----------------Norm product---------------
+    auto norm_result = std::sqrt(1 + 4 + 9 + 16);
+    REQUIRE(input.norm() == norm_result);
 }
 
 TEST_CASE("TEST VECTOR ON SCALAR", "[VECTOR ON SCALAR]")

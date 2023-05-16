@@ -14,7 +14,7 @@ namespace krain
     requires SCALAR<T>
     class Vector{
         using VECT = Vector<T, Rows, Columns>;
-        using VECT2  = Vector<T, Columns, Rows>;
+        #define VECT2   Vector<T, Columns, Rows>
         public:
         const size_t rows{Rows}, columns{Columns}, size{Rows*Columns};
         Vector():m_data{0}{
@@ -41,6 +41,13 @@ namespace krain
         {
             return m_data[getIndex(row, column)];
         }
+        // std::array<T, Columns> get(std::size_t row)
+        // {
+        //     std::size_t begin = getIndex(row, 0);
+        //     std::size_t end = begin+Columns;
+        //     auto result = std::array<T, Columns>{m_data.begin()+begin, m_data.begin()+end};
+        //     return result;
+        // }
         std::array<T, Rows*Columns>& getData()
         {
             return m_data;
@@ -162,7 +169,7 @@ namespace krain
                          const Vector<T, Columns, NewColumns>& vect2
                          )
         {
-            Vector<T, Rows, NewColumns> result{0};
+            Vector<T, Rows, NewColumns> result{};
             for(size_t y1=0; y1 < Rows; y1++)
             {
                 for(size_t x1=0; x1 < NewColumns; x1++)
@@ -170,7 +177,7 @@ namespace krain
                     T sum = 0;
                     for(size_t x2=0; x2 < Columns; x2++)
                     {
-                        sum += vect.get(y1, x2) * vect2.get(x2, y1);
+                        sum += vect.get(y1, x2) * vect2.get(x2, x1);
                     }
                     result.get(y1, x1) = sum;
                 }
@@ -346,19 +353,42 @@ namespace krain
         }
         static VECT2 Tr(const VECT& vect)
         {
-            VECT2 result{vect.m_data};
+            VECT2 result{};
+            for(size_t i=0; i<result.rows; i++)
+            {
+                for(size_t j=0; j<result.columns; j++)
+                {
+                    result.get(i,j) = vect.get(j, i);
+                }
+            }
             return result;
         }
         VECT2 Tr() const
         {
-            VECT2 result{this->m_data};
+            auto result = Tr(*this);
+            return result;
+        }
+        static T mean(const VECT& input)
+        {
+            return input.sum()/((T) input.size);
+        }
+        T mean() const
+        {
+            T result = mean(*this);
             return result;
         }
 
-        T mean() const
+        static T norm(const VECT& input)
         {
-            T result = this->sum();
-            result /= ((T)size);
+            T result = 0;
+            for(auto const& x: input.m_data)
+                result += std::pow(x, 2);
+            return std::sqrt(result);
+        }
+
+        T norm() const
+        {
+            T result = norm(*this);
             return result;
         }
         //----------------------generator-----------------------------------
