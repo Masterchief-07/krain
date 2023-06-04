@@ -1,6 +1,7 @@
 #include <catch2/catch_test_macros.hpp>
 // #include <catch2/benchmark/catch_benchmark.hpp>
 #include <vector.hpp>
+#include <linear.hpp>
 
 TEST_CASE("test Vector", "[VECTOR]") {
     krain::Vector<double, 1, 2> myvect{};
@@ -82,4 +83,8 @@ TEST_CASE("TEST VECTOR ON SCALAR", "[VECTOR ON SCALAR]")
 }
 
 
+TEST_CASE("TEST Linear Algebra", "[LINEAR ALGEBRA]")
+{
+
+}
 
