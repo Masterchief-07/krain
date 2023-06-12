@@ -1,6 +1,7 @@
 #pragma once
 // #include <vector>
-#include "vector.hpp"
+#include "matrix1d.hpp"
+#include "matrix2d.hpp"
 #include <cmath>
 
 namespace krain
@@ -11,8 +12,7 @@ class LinearRegression{
     public:
     LinearRegression(){}
     ~LinearRegression(){}
-    template<size_t columns>
-    void train(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target, scalar lr=0.001, scalar threshold=0.05)
+    void train(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
     {
         w = 0;
         b = 0;
@@ -27,8 +27,26 @@ class LinearRegression{
         }
         // w_grad = 
     }
-    template<size_t columns>
-    Vector<scalar, 1, columns> predict(const Vector<scalar, 1, columns>& input)
+    void train(const matrix::Matrix2D<scalar>& input, const matrix::Matrix2D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
+    {
+        w = 0;
+        b = 0;
+        w_grad = 0;
+        b_grad = 0;
+        setLR(lr);
+        scalar loss = 1;
+        while(loss>threshold && !std::isinf(loss))
+        {
+            loss = 0;
+            for(size_t i=0; i<input.getRows(); i++)
+            {
+                loss += steps(input.at(i), target);
+            }
+            loss /= input.getRows();
+            loss_evolution.push_back(loss);
+        }
+    }
+    matrix::Matrix1D<scalar> predict(const matrix::Matrix1D<scalar>& input)
     {
         return b + w * input;
     }
@@ -55,8 +73,7 @@ class LinearRegression{
     }
 
     private:
-    template<size_t columns>
-    scalar steps(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& target)
+    scalar steps(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& target)
     {
         auto output = b + (w * input) ;
         // std::cout<<"output: "<<output<<"\n";
@@ -77,14 +94,12 @@ class LinearRegression{
 
         return loss;
     }
-    template<size_t columns>
-    scalar wGrad(const Vector<scalar, 1, columns>& input, const Vector<scalar, 1, columns>& error)
+    scalar wGrad(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& error)
     {
         return 2.0 * (input * error).mean();
 
     }
-    template<size_t columns>
-    scalar bGrad(const Vector<scalar, 1, columns>& error)
+    scalar bGrad(const matrix::Matrix1D<scalar>& error)
     {
         return 2.0 * error.mean();
     }
