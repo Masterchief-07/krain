@@ -17,15 +17,24 @@ FetchContent_Declare(
 )
 FetchContent_MakeAvailable(Catch2)
 
+FetchContent_Declare(
+  Matrix
+  GIT_REPOSITORY https://github.com/Masterchief-07/MATRIX.git
+  GIT_TAG        main
+)
+FetchContent_MakeAvailable(Matrix)
+# add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/external/MATRIX)
+
 add_executable(${PROJECT_NAME} main.cpp)
 target_include_directories(${PROJECT_NAME} PRIVATE ${matplotlib_SOURCE_DIR})
 target_include_directories(${PROJECT_NAME} PRIVATE include)
-target_link_libraries(${PROJECT_NAME} matplotlib_cpp)
+target_include_directories(${PROJECT_NAME} PRIVATE ${Matrix_SOURCE_DIR}/matrix)
+target_link_libraries(${PROJECT_NAME} matplotlib_cpp Matrix)
 
 #----------------testing---------------------------------------------------------------
 add_executable(tests tests/tests.cpp)
-target_include_directories(tests PRIVATE include)
-target_link_libraries(tests PRIVATE Catch2::Catch2WithMain)
+target_include_directories(tests PRIVATE include ${matrix_SOURCE_DIR}/matrix)
+target_link_libraries(tests PRIVATE Catch2::Catch2WithMain Matrix)
 
 list(APPEND CMAKE_MODULE_PATH ${catch2_SOURCE_DIR}/extras)
 include(CTest)
