@@ -110,4 +110,9 @@ class LinearRegression{
     std::vector<scalar> w_evolution{}, b_evolution{}, loss_evolution{};
 
 };
+
+class LogisticRegression
+{
+
+};
 }
