@@ -20,7 +20,7 @@ namespace krain
         template<typename T, typename J>
         virtual J Backward(T) = 0;
 
-    }
+    };
     
 } // namespace krain
 
