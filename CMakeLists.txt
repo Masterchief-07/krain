@@ -32,7 +32,11 @@ target_include_directories(${PROJECT_NAME} PRIVATE ${Matrix_SOURCE_DIR}/matrix)
 target_link_libraries(${PROJECT_NAME} matplotlib_cpp Matrix)
 
 #----------------testing---------------------------------------------------------------
-add_executable(tests tests/tests.cpp)
+add_executable(tests 
+    tests/tests.cpp 
+    tests/tests_linear_regression.cpp
+    tests/tests_logistic_regression.cpp
+  )
 target_include_directories(tests PRIVATE include ${matrix_SOURCE_DIR}/matrix)
 target_link_libraries(tests PRIVATE Catch2::Catch2WithMain Matrix)
 

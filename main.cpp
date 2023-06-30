@@ -1,6 +1,6 @@
 #include <iostream>
 #include <matplotlibcpp.h>
-#include <algorithms/LinearRegression.hpp>
+#include <krain/algorithms/LinearRegression.hpp>
 
 int main() {
 

@@ -2,7 +2,7 @@
 // #include <catch2/benchmark/catch_benchmark.hpp>
 // #include <matrix1d.hpp>
 // #include <matrix2d.hpp>
-#include <algorithms/LogisticRegression.hpp>
+#include <krain/algorithms/LogisticRegression.hpp>
 
 
 TEST_CASE("TEST Logistic", "[LOGISTIC REGRESSION]")
