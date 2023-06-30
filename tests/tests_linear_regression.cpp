@@ -5,7 +5,7 @@
 #include <krain/algorithms/LinearRegression.hpp>
 
 
-TEST_CASE("TEST Linear Algebra", "[LINEAR ALGEBRA]")
+TEST_CASE("TEST Linear Regression", "[LINEAR REGRESSION]")
 {
 
 }
