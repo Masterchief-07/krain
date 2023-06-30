@@ -2,11 +2,12 @@
 // #include <catch2/benchmark/catch_benchmark.hpp>
 // #include <matrix1d.hpp>
 // #include <matrix2d.hpp>
-// #include <linear.hpp>
+#include <algorithms/LogisticRegression.hpp>
 
 
-// TEST_CASE("TEST Linear Algebra", "[LINEAR ALGEBRA]")
-// {
+TEST_CASE("TEST Logistic", "[LOGISTIC REGRESSION]")
+{
 
-// }
+}
+
 
