@@ -12,7 +12,7 @@ class LinearRegression{
     public:
     LinearRegression(){}
     ~LinearRegression(){}
-    void train(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
+    void Train(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
     {
         w = 0;
         b = 0;
@@ -27,7 +27,7 @@ class LinearRegression{
         }
         // w_grad = 
     }
-    void train(const matrix::Matrix2D<scalar>& input, const matrix::Matrix2D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
+    void Train(const matrix::Matrix2D<scalar>& input, const matrix::Matrix2D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
     {
         w = 0;
         b = 0;
@@ -46,7 +46,7 @@ class LinearRegression{
             loss_evolution.push_back(loss);
         }
     }
-    matrix::Matrix1D<scalar> predict(const matrix::Matrix1D<scalar>& input)
+    matrix::Matrix1D<scalar> Forward(const matrix::Matrix1D<scalar>& input)
     {
         return b + w * input;
     }
@@ -75,7 +75,7 @@ class LinearRegression{
     private:
     scalar steps(const matrix::Matrix1D<scalar>& input, const matrix::Matrix1D<scalar>& target)
     {
-        auto output = b + (w * input) ;
+        auto output = Forward(input) ;
         // std::cout<<"output: "<<output<<"\n";
         auto error = output - target;
         // std::cout<<"error: "<<error<<"\n";
