@@ -25,7 +25,6 @@ class LinearRegression{
             loss = steps(input, target);
             loss_evolution.push_back(loss);
         }
-        // w_grad = 
     }
     void Train(const matrix::Matrix2D<scalar>& input, const matrix::Matrix2D<scalar>& target, scalar lr=0.001, scalar threshold=0.05)
     {
@@ -111,8 +110,4 @@ class LinearRegression{
 
 };
 
-class LogisticRegression
-{
-
-};
 }
